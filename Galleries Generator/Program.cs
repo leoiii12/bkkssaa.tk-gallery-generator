@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -12,46 +15,97 @@ namespace Galleries_Generator
 
         private static void Main(string[] args)
         {
-            var currenctDirectoryPath = Directory.GetCurrentDirectory();
-            var subDirectoriesPaths = Directory.EnumerateDirectories(currenctDirectoryPath).ToList();
+            var rootDirectory = Directory.GetCurrentDirectory();
+
+            if (!IsCorrectRootDirectory(rootDirectory))
+            {
+                Console.WriteLine("Please run in the correct folder !");
+                Console.WriteLine("Press any key to exit ...");
+
+                Console.ReadKey();
+
+                return;
+            }
+
+            var galleryDirectories = Directory.EnumerateDirectories(rootDirectory).ToList();
+
             var galleries = new List<Gallery>();
 
-            for (var index = 1; index <= subDirectoriesPaths.Count; index++)
+            for (var index = 0; index < galleryDirectories.Count; index++)
             {
-                var subDirectoriesPath = subDirectoriesPaths[index - 1];
-                var subDirectoryLength = subDirectoriesPath.Length;
-
-                string currentDirectoryName;
-                try
-                {
-                    currentDirectoryName = subDirectoriesPath.Substring(subDirectoriesPath.IndexOf(GALLERIES_CONTAINER_NAME, StringComparison.Ordinal) + GALLERIES_CONTAINER_NAME.Length + 1);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Please run in the correct folder !");
-                    break;
-                }
-
-                var images = Directory
-                    .GetFiles(subDirectoriesPath)
-                    .Select(path => currentDirectoryName + path.Substring(subDirectoryLength))
-                    .ToList();
+                var galleryDirectory = galleryDirectories[index];
+                var galleryName = Path.GetFileName(galleryDirectory);
 
                 var gallery = new Gallery
                 {
-                    Id = index,
-                    Name = currentDirectoryName,
-                    Images = images
+                    Id = index + 1,
+                    Name = galleryName
                 };
+
+                var imagePaths = Directory.GetFiles(galleryDirectory).Where(path =>
+                {
+                    var fileName = Path.GetFileName(path);
+                    return fileName != null && !fileName.Contains("thumb");
+                });
+
+                foreach (var imagePath in imagePaths)
+                {
+                    var image = System.Drawing.Image.FromFile(imagePath);
+
+                    var thumb = ResizeImage(image, 250, image.Width * 250 / image.Height);
+                    thumb.Save(Path.ChangeExtension(imagePath, "thumb.jpg"));
+
+                    image.Dispose();
+                    thumb.Dispose();
+
+                    var imageName = Path.GetFileNameWithoutExtension(imagePath);
+
+                    gallery.Images.Add(new Image
+                    {
+                        RealPath = galleryName + "/" + imageName + ".jpg",
+                        ThumbnailPath = galleryName + "/" + imageName + ".thumb.jpg"
+                    });
+                }
 
                 galleries.Add(gallery);
             }
 
             var output = JsonConvert.SerializeObject(galleries);
-            File.WriteAllText(currenctDirectoryPath + "\\galleries.json", output);
+            File.WriteAllText(rootDirectory + "\\galleries.json", output);
 
-            Console.WriteLine("Finished ! Press any key to exit ...");
+            Console.WriteLine("Finished !");
+            Console.WriteLine("Press any key to exit ...");
             Console.ReadLine();
+        }
+
+        private static bool IsCorrectRootDirectory(string rootDirectory)
+        {
+            return Path.GetFileName(rootDirectory) == GALLERIES_CONTAINER_NAME;
+        }
+
+        private static Bitmap ResizeImage(System.Drawing.Image image, int height, int width)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

@@ -15,6 +15,15 @@ namespace Galleries_Generator
         public string Description { get; set; } = "";
 
         [JsonProperty(PropertyName = "images")]
-        public List<string> Images { get; set; }
+        public List<Image> Images { get; set; } = new List<Image>();
+    }
+
+    internal class Image
+    {
+        [JsonProperty(PropertyName = "real")]
+        public string RealPath { get; set; }
+
+        [JsonProperty(PropertyName = "thumbnail")]
+        public string ThumbnailPath { get; set; }
     }
 }
