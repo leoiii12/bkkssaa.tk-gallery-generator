@@ -14,6 +14,8 @@ namespace Galleries_Generator
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; } = "";
 
+        public int Year { get; set; }
+
         [JsonProperty(PropertyName = "images")]
         public List<Image> Images { get; set; } = new List<Image>();
     }

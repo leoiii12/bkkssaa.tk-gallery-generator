@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace Galleries_Generator
@@ -36,34 +37,39 @@ namespace Galleries_Generator
                 var galleryDirectory = galleryDirectories[index];
                 var galleryName = Path.GetFileName(galleryDirectory);
 
+                if (galleryName == null) continue;
+
+                var galleryYear = new Regex("((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3})))(?![\\d])", RegexOptions.IgnoreCase | RegexOptions.Singleline).Match(galleryName).Groups[1].ToString();
+
                 var gallery = new Gallery
                 {
                     Id = index + 1,
-                    Name = galleryName
+                    Name = galleryName,
+                    Year = int.Parse(galleryYear)
                 };
 
                 var imagePaths = Directory.GetFiles(galleryDirectory).Where(path =>
                 {
                     var fileName = Path.GetFileName(path);
-                    return fileName != null && !fileName.Contains("thumb");
+                    return fileName != null && !fileName.Contains("thumb") && fileName.ToLower().Contains("jpg");
                 });
 
                 foreach (var imagePath in imagePaths)
                 {
                     var image = System.Drawing.Image.FromFile(imagePath);
 
-                    var thumb = ResizeImage(image, 250, image.Width * 250 / image.Height);
+                    var thumb = ResizeImage(image, 250, image.Width*250/image.Height);
                     thumb.Save(Path.ChangeExtension(imagePath, "thumb.jpg"));
 
                     image.Dispose();
                     thumb.Dispose();
 
-                    var imageName = Path.GetFileNameWithoutExtension(imagePath);
+                    var imageName = Path.GetFileName(imagePath);
 
                     gallery.Images.Add(new Image
                     {
-                        RealPath = galleryName + "/" + imageName + ".jpg",
-                        ThumbnailPath = galleryName + "/" + imageName + ".thumb.jpg"
+                        RealPath = galleryName + "/" + imageName,
+                        ThumbnailPath = galleryName + "/" + Path.GetFileNameWithoutExtension(imageName) + ".thumb.jpg"
                     });
                 }
 
