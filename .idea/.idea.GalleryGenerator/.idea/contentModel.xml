@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="GalleryGenerator" t="IncludeRecursive">
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Gallery.cs" t="Include" />
+        <e p="GalleryGenerator.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Release" t="Include">
+            <e p="netcoreapp2.0" t="Include">
+              <e p="GalleryGenerator.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="publish" t="Include">
+          <e p="appsettings.json" t="Include" />
+          <e p="GalleryGenerator.deps.json" t="Include" />
+          <e p="GalleryGenerator.dll" t="Include" />
+          <e p="GalleryGenerator.pdb" t="Include" />
+          <e p="GalleryGenerator.runtimeconfig.json" t="Include" />
+          <e p="Microsoft.Extensions.Configuration.Abstractions.dll" t="Include" />
+          <e p="Microsoft.Extensions.Configuration.dll" t="Include" />
+          <e p="Microsoft.Extensions.Configuration.FileExtensions.dll" t="Include" />
+          <e p="Microsoft.Extensions.Configuration.Json.dll" t="Include" />
+          <e p="Microsoft.Extensions.FileProviders.Abstractions.dll" t="Include" />
+          <e p="Microsoft.Extensions.FileProviders.Physical.dll" t="Include" />
+          <e p="Microsoft.Extensions.FileSystemGlobbing.dll" t="Include" />
+          <e p="Microsoft.Extensions.Primitives.dll" t="Include" />
+          <e p="Newtonsoft.Json.dll" t="Include" />
+          <e p="runtimes" t="Include">
+            <e p="unix" t="Include">
+              <e p="lib" t="Include">
+                <e p="netcoreapp2.0" t="Include">
+                  <e p="System.Memory.dll" t="Include" />
+                </e>
+              </e>
+            </e>
+            <e p="win" t="Include">
+              <e p="lib" t="Include">
+                <e p="netcoreapp2.0" t="Include">
+                  <e p="System.Memory.dll" t="Include" />
+                </e>
+              </e>
+            </e>
+          </e>
+          <e p="SixLabors.Core.dll" t="Include" />
+          <e p="SixLabors.ImageSharp.dll" t="Include" />
+          <e p="System.Memory.dll" t="Include" />
+          <e p="System.Runtime.CompilerServices.Unsafe.dll" t="Include" />
+        </e>
+      </e>
+      <e p="GalleryGenerator.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/Rider2017.3/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_GalleryGenerator.-1761806810.00" t="ExcludeRecursive" />
+  </component>
+</project>
